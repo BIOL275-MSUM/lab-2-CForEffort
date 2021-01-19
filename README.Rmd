@@ -1,11 +1,9 @@
 ---
 title: "Lab 2: Introduction to RStudio"
-author: "___"
+author: "Faith"
 date: "`r format(Sys.Date())`"
 output: github_document
 ---
-
-> INSTRUCTIONS: REMOVE THIS LINE AND REPLACE ____ WITH YOUR OWN TEXT
 
 Welcome to my Lab 2 repository for Quantitative Biology BIOL 275 at MSUM.
 
@@ -13,8 +11,11 @@ Welcome to my Lab 2 repository for Quantitative Biology BIOL 275 at MSUM.
 
 The objectives of this lab are:
 
-- ___
-- ___
+- Use the console and source window in RStudio
+- Write and run code with R script
+- Document your R code with comments
+- Transfer code from and R script to an R markdown document
+- Craft a narrative combining text explanation, code, and graphs
 
 ## Repository contents
 
@@ -45,3 +46,72 @@ Here is my session information:
 ```{r}
 sessioninfo::session_info(c("tidyverse"))
 ```
+
+# This is an R script containing the code used in Lab 2 Intro to RStudio
+
+# ASSIGNMENT:
+#   1. Run the code below to make sure it works
+#   2. Edit the code to complete the self assessment
+#   3. Copy chunks of the final code to your R Markdown document calculator.Rmd
+
+k <- c(6.05, 4.89, 3.32, 4.93, 5.25, 5.04, 4.91, 2.84, 5.60, 5.34)
+k
+
+length(k)  # sample size
+median(k)  # median value
+mean(k)    # mean value
+sd(k)      # standard deviation
+
+n <- length(k) # sample size
+n
+
+sem <- sd(k) / sqrt(n) # standard error of the mean
+sem
+
+mean(k) + 1.96 * sem                             # upper limit
+mean(k) - 1.96 * sem                             # lower limit
+c(mean(k) + 1.96 * sem, mean(k) - 1.96 * sem)    # both limits combined
+
+library(tidyverse)
+
+# check to make sure you did the part above correctly
+# if not, generate some fake x data
+if (!exists("k") | !is.numeric(k) | !length(k) == 10) x <- rep(1, 10)
+
+# put the chick data into a data frame
+chick_data <-
+  tibble::tibble(
+    diet = rep(c("Combined", "Combined", "Organic", "Non-Organic"), each = 5),
+    weight = c(k, k)
+  )
+
+# summarize the chick weights by diet
+chick_summary <-
+  chick_data %>% 
+  group_by(diet) %>% 
+  summarize(
+    mean = mean(weight),
+    median = median(weight),
+    sd = sd(weight),
+    n = n(),
+    sem = sd / sqrt(n),
+    upper = mean + 1.96 * sem,   # upper confidence limit
+    lower = mean - 1.96 * sem,   # lower confidence limit
+    .groups = "drop"
+  )
+
+# plot chick weights
+ggplot(chick_data, aes(x = diet, y = weight, color = diet, fill = diet)) +
+  geom_jitter(size = 5, shape = 21, alpha = 0.5, width = 0.1) +
+  geom_crossbar(
+    mapping = aes(ymin = lower, ymax = upper, y = mean), 
+    data = chick_summary,
+    width = 0.2, alpha = 0.2
+  ) +
+  labs(
+    title = "Weights of chicks fed organic and non-organic grain",
+    x = "Diet",
+    color = "Diet",
+    fill = "Diet",
+    y = "Weight (g)"
+  )
