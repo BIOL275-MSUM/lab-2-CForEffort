@@ -20,8 +20,8 @@ The objectives of this lab are:
 
 The repository contains the following scripts:
 
+  - [calculator.md](calculator.md)
   - [Lab 2 Report](assignment.md)
-  - [calculator.Rmd](calculator.Rmd)
 
 ## Instructions for knitting
 
